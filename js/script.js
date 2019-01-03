@@ -1,3 +1,4 @@
+
 /******************************************
 Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
@@ -12,17 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const studentList = document.getElementsByClassName('student-item');
       // Declare the first page as number 1 for when the showPage function is called at end
       const firstPage = 1;
+      const students = Array.from(studentList);
    // END OF GLOBAL VARIABLES ********************************************
 
 
 
    // START OF 'showPage' FUNCTION ***************************************
    // Create/define the function to show 10 'studentList' items per page
-   const showPage = (list, page) => { 
+   function showPage(list, page) { 
       // Define the first 'studentList' item and the last 'studentList' item on the page
       let firstListItem = (page * 10) - 10;
       let lastListItem = firstListItem + 9;
       
+
       //Loop over items in the list parameter (each 'studentList' item)
       for (let i = 0; i < list.length; i++) {
          // Set conditions for how 'studentList' items appear on the page (10 per page)
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }      
    }
    // END OF 'showPage' FUNCTION ****************************************
+   showPage(studentList, firstPage);
 
 
 
@@ -61,11 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
          // For every page, add both a new LI and a new A element inside the 'pageLinksUl' UL
          for (let i = 1; i <= pagesNeeded; i++) {
             const pageLi = document.createElement('li'); 
+            pageLi.className = 'listItem';
             pageLinksUl.appendChild(pageLi);
             const a = document.createElement('a');
             a.setAttribute('href', '#');
             // Set the textContent of each button/link with its respective page number
             a.textContent = i;
+            a.className = 'link';
             pageLi.appendChild(a);
             // Set page 1 as the default 'active' page on every reload of the page
             if (i === 1) {
@@ -124,49 +130,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // NUMBER 2: Add Functionality to Search Component   
 
-   // 1. When search button is clicked, list is filtered to match search value
-   //searchButton.addEventListener('click', filterInput);
-   // 2. Add keyup event listener to filter in real time
-
-   // Get input element
-   //let searchInput = document.getElementsByClassName('searchInput');
    // Add event listener to input
-   searchInput.addEventListener('keyup', filterInput);
-   
-   function filterInput() {
+   searchInput.addEventListener('keyup', () => {
+      let studentLi = document.getElementsByClassName('student-item');
       // Get value of input
       let inputValue = searchInput.value.toLowerCase();
-
-      // Capture 'student-list' UL element
-      //let ul = document.getElementsByClassName('student-list');
-      // Capture LI elements from the UL (LI elements contained in global 'const studentList')
-      let li = document.querySelectorAll('li.student-item');
-
-      // Loop through the LI elements  DELETE: NAME(h3) & EMAIL(span.email)
-      for (let i = 0; i < li.length; i++) {
-         let h3 = li[i].getElementsByTagName('h3')[0];
+      
+      // Loop through the LI elements to show matches in real time
+      for (let i = 0; i < studentLi.length; i++) {
+         let h3 = studentLi[i].getElementsByTagName('h3')[0];
          // If matched
          if (h3.innerHTML.toLowerCase().indexOf(inputValue) > -1) {
-            li[i].style.display = 'block';
+            studentLi[i].style.display = 'block';
+            students.push(studentList[i]);
          }  else {
-            li[i].style.display = 'none';
+            studentLi[i].style.display = 'none';
          }
       }
-   }
-
-
-// NUMBER 3: Paginate the Search Results
-
-   // 1. Change page links depending upon how many results are returned
-   // HINT: Each function already created (3) will make this easier
-
-
-// NUMBER 4: Handle No Results Returned
-
-   // 1. If no matches are found, include an HTML message to say there are no matches
-   // HINT: This message must be printed to the page 
-
-
+   });
+  
+   // Clears search field when button is clicked
+   // Sets pageButton className back to 'active' on page 1 on button click to make page 1 the default 'home' page
+      searchButton.addEventListener('click', clearSearch);
+      function clearSearch() {
+         searchInput.value = '';
+         showPage(studentList, firstPage);
+         const pageButtons = document.querySelectorAll('a');
+         for (let i = 0; i < pageButtons.length; i++) {
+            pageButtons[0].className = 'active';  
+            if (i !== 0) {
+               pageButtons[i].className = '';
+            }
+         }
+      }
+      // Call function
+      clearSearch();
 
 // END OF EXCEEDS EXPECTATION ITEMS **************************************   
 
